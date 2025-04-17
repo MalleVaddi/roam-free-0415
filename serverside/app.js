@@ -4,6 +4,7 @@ const bodyParser  = require('body-parser');
 const mongoose = require('mongoose');
 const Location = require('./models/location')
 const User = require('./models/user')
+const Login = require('./models/login')
 const cors = require('cors');
 app.use(cors());
 
@@ -119,6 +120,21 @@ app.post('/user_profile', (req, res, next) => {
   
 });
 
+app.get('/user_profile/:id', (req, res, next) => {
+  //call mongoose method findOne (MongoDB db.Students.findOne())
+  User.findOne({_id: req.params.id}) 
+      //if data is returned, send data as a response 
+      .then(data => {
+          res.status(200).json(data)
+          console.log(data);
+      })
+      //if error, send internal server error
+      .catch(err => {
+      console.log('Error: ${err}');
+      res.status(500).json(err);
+  });
+});
+
 app.delete("/user_profile/:id", (req, res, next) => {
   User.deleteOne({ _id: req.params.id }).then(result => {
       console.log(result);
@@ -163,6 +179,36 @@ app.put('/user_profile/:id', (req, res, next) => {
   } else { 
       console.log("please provide correct id"); 
   } 
+});
+
+app.post('/login', async (req, res) => {
+  const { email, password } = req.body;
+
+  try {
+    // Check if the user exists
+    const user = await Login.findOne({ email });
+
+    if (!user || user.password !== password) {
+      return res.status(401).json({
+        success: false,
+        message: 'Invalid email or password'
+      });
+    }
+
+    // If matched
+    return res.status(200).json({
+      success: true,
+      message: 'Login successful',
+      userId: user._id
+    });
+
+  } catch (err) {
+    console.error('Login error:', err);
+    return res.status(500).json({
+      success: false,
+      message: 'Internal server error'
+    });
+  }
 });
 
 /* ------------------- 📝 POST ROUTES ------------------- */

@@ -5,13 +5,16 @@ import { UserFormComponent } from './user-form/user-form.component';
 import { NotFoundComponent } from './not-found/not-found.component';
 import { CommentComponent } from './comment/comment.component';
 import { PostComponent } from './post/post.component'; // ✅ Import the PostComponent
-
+import { LoginComponent } from './login/login.component';
 
 
 export const routes: Routes = [
     {
         path: '',  //default component to display
-        component: ListUserComponent
+        component: LoginComponent
+    }, {
+        path: 'login',  //  Login route
+        component: LoginComponent
     }, {
         path: 'posts', 
         component: PostComponent
